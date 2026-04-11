@@ -1,0 +1,55 @@
+# Android Studio and Gradle
+.gradle/
+.idea/
+build/
+captures/
+gradle/wrapper/gradle-wrapper.jar
+*.apk
+*.aar
+*.ap_
+*.aab
+*.zip
+*.tar.gz
+*.rar
+
+# Android specific
+.DS_Store
+local.properties
+*.iml
+*.jks
+*.keystore
+
+# Local configuration file (sdk path, etc)
+local.properties
+
+# IDE specific files
+.classpath
+.project
+.settings/
+*.swp
+*.swo
+*~
+.vscode/
+.vs/
+
+# Build artifacts
+bin/
+gen/
+out/
+release/
+debug/
+/app/release/
+
+# NDK
+obj/
+
+# Version control
+.git/
+
+# OS specific
+.DS_Store
+Thumbs.db
+*.log
+
+# Kotlin
+*.kt.bak
