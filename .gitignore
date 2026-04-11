@@ -1,55 +1,92 @@
-# Android Studio and Gradle
-.gradle/
-.idea/
-build/
-captures/
-gradle/wrapper/gradle-wrapper.jar
+# ============================================================
+# Android / Gradle
+# ============================================================
 *.apk
 *.aar
 *.ap_
 *.aab
-*.zip
-*.tar.gz
-*.rar
+*.dex
+*.class
+*.hprof
+*.kt.bak
 
-# Android specific
-.DS_Store
-local.properties
-*.iml
-*.jks
-*.keystore
-
-# Local configuration file (sdk path, etc)
-local.properties
-
-# IDE specific files
-.classpath
-.project
-.settings/
-*.swp
-*.swo
-*~
-.vscode/
-.vs/
-
-# Build artifacts
+build/
+.gradle/
 bin/
 gen/
 out/
 release/
 debug/
 /app/release/
-
-# NDK
 obj/
+.cxx/
+.externalNativeBuild/
+.navigation/
+captures/
 
-# Version control
-.git/
+local.properties
+google-services.json
 
-# OS specific
+# ============================================================
+# Android Studio / IntelliJ
+# ============================================================
+.idea/
+*.iml
+proguard/
+vcs.xml
+
+# ============================================================
+# Keystore — uncomment when you have a release keystore
+# ============================================================
+#*.jks
+#*.keystore
+
+# ============================================================
+# Lint
+# ============================================================
+lint/intermediates/
+lint/generated/
+lint/outputs/
+lint/tmp/
+
+# ============================================================
+# OS
+# ============================================================
 .DS_Store
 Thumbs.db
+
+# ============================================================
+# Logs
+# ============================================================
 *.log
 
-# Kotlin
-*.kt.bak
+# ============================================================
+# Other editors (VS Code, Eclipse, Vim)
+# ============================================================
+.vscode/
+.vs/
+.classpath
+.project
+.settings/
+*.swp
+*.swo
+*~
+
+# ============================================================
+# Archives — remove if you never commit zips
+# ============================================================
+*.zip
+*.tar.gz
+*.rar
+
+# ============================================================
+# Tools (not used in this project, harmless to keep)
+# ============================================================
+freeline.py
+freeline/
+freeline_project_description.json
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots
+fastlane/test_output
+fastlane/readme.md
