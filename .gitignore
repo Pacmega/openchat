@@ -8,10 +8,10 @@
 *.dex
 *.class
 *.hprof
-*.kt.bak
 
 build/
 .gradle/
+gradle/
 bin/
 gen/
 out/
@@ -26,6 +26,12 @@ captures/
 
 local.properties
 google-services.json
+
+# ============================================================
+# Android SDK / JDK
+# ============================================================
+android-sdk/
+jdk21/
 
 # ============================================================
 # Android Studio / IntelliJ
@@ -73,14 +79,14 @@ Thumbs.db
 *~
 
 # ============================================================
-# Archives — remove if you never commit zips
+# Archives
 # ============================================================
 *.zip
 *.tar.gz
 *.rar
 
 # ============================================================
-# Tools (not used in this project, harmless to keep)
+# Fastlane
 # ============================================================
 freeline.py
 freeline/

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="primary">#2481CC</color>
+    <color name="primary_variant">#1A6AA8</color>
+    <color name="secondary">#EEFFEE</color>
+    <color name="background">#FFFFFF</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="on_primary">#FFFFFF</color>
+    <color name="on_secondary">#000000</color>
+    <color name="on_background">#000000</color>
+    <color name="on_surface">#000000</color>
+    <color name="user_bubble">#DCF8C6</color>
+    <color name="model_bubble">#E5E5EA</color>
+    <color name="divider">#E0E0E0</color>
+    <color name="timestamp">#8E8E93</color>
+    <color name="status_online">#4CD964</color>
+</resources>
