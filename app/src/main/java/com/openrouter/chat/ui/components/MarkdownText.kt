@@ -15,6 +15,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.tooling.preview.Preview
 
 @OptIn(ExperimentalTextApi::class)
 @Composable
@@ -72,6 +73,7 @@ fun MarkdownText(
     )
 }
 
+@Preview
 @Composable
 fun MessageBubble(
     content: String,
@@ -84,12 +86,14 @@ fun MessageBubble(
         MaterialTheme.colorScheme.surfaceVariant
     }
 
-    val shape = RoundedCornerShape(
-        topStart = 18f,
-        topEnd = 18f,
-        bottomStart = if (isFromUser) 18f else 4f,
-        bottomEnd = if (isFromUser) 4f else 18f
-    )
+    val shape = remember(isFromUser) {
+        RoundedCornerShape(
+            topStart = 18f,
+            topEnd = 18f,
+            bottomStart = if (isFromUser) 18f else 4f,
+            bottomEnd = if (isFromUser) 4f else 18f
+        )
+    }
 
     Box(
         modifier = modifier

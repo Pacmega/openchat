@@ -8,14 +8,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import com.openrouter.chat.di.SecurePreferences
-import com.openrouter.chat.domain.repository.ModelRepository
-import com.openrouter.chat.domain.repository.ConversationRepository
-import com.openrouter.chat.domain.repository.MessageRepository
 import com.openrouter.chat.data.local.dao.ConversationDao
 import com.openrouter.chat.data.local.dao.MessageDao
 import com.openrouter.chat.data.local.dao.ModelDao
@@ -90,6 +88,10 @@ fun SettingsScreen(
     viewModel: SettingsViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    val hasApiKey = remember {
+        derivedStateOf { uiState.apiKey.isNotBlank() }
+    }
 
     if (uiState.showClearDialog) {
         AlertDialog(
@@ -201,4 +203,12 @@ fun SettingsScreen(
             }
         }
     }
+}
+
+@Preview
+@Composable
+private fun SettingsScreenPreview() {
+    SettingsScreen(
+        onBackClick = {}
+    )
 }

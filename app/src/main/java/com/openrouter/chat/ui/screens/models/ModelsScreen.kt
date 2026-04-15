@@ -6,12 +6,14 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -70,6 +72,10 @@ fun ModelsScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
+    val isEmptyState = remember {
+        derivedStateOf { uiState.models.isEmpty() && !uiState.isLoading }
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -80,7 +86,7 @@ fun ModelsScreen(
                     }
                     IconButton(onClick = onSettingsClick) {
                         Icon(
-                            Icons.Default.Refresh,
+                            Icons.Default.Settings,
                             contentDescription = "Settings"
                         )
                     }
@@ -196,4 +202,13 @@ private fun formatTimestamp(timestamp: Long): String {
         diff < 604_800_000 -> "${diff / 86_400_000}d"
         else -> SimpleDateFormat("MMM d", Locale.getDefault()).format(Date(timestamp))
     }
+}
+
+@Preview
+@Composable
+private fun ModelsScreenPreview() {
+    ModelsScreen(
+        onModelClick = {},
+        onSettingsClick = {}
+    )
 }

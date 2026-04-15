@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -262,12 +263,16 @@ fun ChatScreen(
     val listState = rememberLazyListState()
     val focusManager = LocalFocusManager.current
 
+    val shouldAutoScroll by remember {
+        derivedStateOf { uiState.messages.isNotEmpty() }
+    }
+
     LaunchedEffect(conversationId, modelId) {
         viewModel.loadChat(conversationId, modelId)
     }
 
     LaunchedEffect(uiState.messages.size) {
-        if (uiState.messages.isNotEmpty()) {
+        if (shouldAutoScroll) {
             listState.animateScrollToItem(uiState.messages.size - 1)
         }
     }
@@ -354,6 +359,16 @@ fun ChatScreen(
             }
         }
     }
+}
+
+@Preview
+@Composable
+private fun ChatScreenPreview() {
+    ChatScreen(
+        conversationId = 1L,
+        modelId = "model-1",
+        onBackClick = {}
+    )
 }
 
 @Composable

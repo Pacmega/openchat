@@ -6,12 +6,14 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -80,6 +82,10 @@ fun ConversationsScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
+    val hasConversations = remember {
+        derivedStateOf { uiState.conversations.isNotEmpty() }
+    }
+
     LaunchedEffect(modelId) {
         viewModel.loadConversations(modelId)
     }
@@ -90,7 +96,7 @@ fun ConversationsScreen(
                 title = { Text(modelName) },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
-                        Icon(Icons.Default.Add, contentDescription = "Back")
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
                     }
                 }
             )
@@ -170,4 +176,15 @@ private fun formatDateTime(timestamp: Long): String {
         diff < 604_800_000 -> SimpleDateFormat("EEE", Locale.getDefault()).format(Date(timestamp))
         else -> SimpleDateFormat("MMM d, yyyy", Locale.getDefault()).format(Date(timestamp))
     }
+}
+
+@Preview
+@Composable
+private fun ConversationsScreenPreview() {
+    ConversationsScreen(
+        modelId = "model-1",
+        modelName = "GPT-4",
+        onConversationClick = {},
+        onBackClick = {}
+    )
 }
