@@ -152,3 +152,90 @@ class ChatDeltaTest {
         assertNull(delta.role)
     }
 }
+
+class OpenRouterModelDtoTest {
+
+    @Test
+    fun `OpenRouterModel should create with required fields`() {
+        val model = OpenRouterModel(
+            id = "model-1",
+            name = "GPT-4"
+        )
+
+        assertEquals("model-1", model.id)
+        assertEquals("GPT-4", model.name)
+    }
+
+    @Test
+    fun `OpenRouterModel should have nullable topProvider`() {
+        val model = OpenRouterModel(
+            id = "model-1",
+            name = "GPT-4"
+        )
+
+        assertNull(model.topProvider)
+    }
+
+    @Test
+    fun `OpenRouterModel should parse topProvider correctly`() {
+        val model = OpenRouterModel(
+            id = "model-1",
+            name = "GPT-4",
+            topProvider = TopProvider(
+                contextLength = 128000L,
+                maxCompletionTokens = 8192L,
+                isModerated = true
+            )
+        )
+
+        assertEquals(128000L, model.topProvider?.contextLength)
+        assertEquals(8192L, model.topProvider?.maxCompletionTokens)
+        assertEquals(true, model.topProvider?.isModerated)
+    }
+
+    @Test
+    fun `OpenRouterModel should have nullable contextLength`() {
+        val model = OpenRouterModel(
+            id = "model-1",
+            name = "GPT-4"
+        )
+
+        assertNull(model.contextLength)
+    }
+
+    @Test
+    fun `OpenRouterModel should parse contextLength when provided`() {
+        val model = OpenRouterModel(
+            id = "model-1",
+            name = "GPT-4",
+            contextLength = 128000L
+        )
+
+        assertEquals(128000L, model.contextLength)
+    }
+}
+
+class TopProviderDtoTest {
+
+    @Test
+    fun `TopProvider should create with default values`() {
+        val topProvider = TopProvider()
+
+        assertNull(topProvider.contextLength)
+        assertNull(topProvider.maxCompletionTokens)
+        assertNull(topProvider.isModerated)
+    }
+
+    @Test
+    fun `TopProvider should parse all fields when provided`() {
+        val topProvider = TopProvider(
+            contextLength = 128000L,
+            maxCompletionTokens = 8192L,
+            isModerated = false
+        )
+
+        assertEquals(128000L, topProvider.contextLength)
+        assertEquals(8192L, topProvider.maxCompletionTokens)
+        assertEquals(false, topProvider.isModerated)
+    }
+}

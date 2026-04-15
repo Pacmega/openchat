@@ -12,12 +12,19 @@ data class OpenRouterModel(
     val id: String,
     @SerializedName("name")
     val name: String,
-    @SerializedName("provider")
-    val provider: String,
-    @SerializedName("provider_name")
-    val providerName: String? = null,
+    @SerializedName("top_provider")
+    val topProvider: TopProvider? = null,
     @SerializedName("context_length")
     val contextLength: Long? = null
+)
+
+data class TopProvider(
+    @SerializedName("context_length")
+    val contextLength: Long? = null,
+    @SerializedName("max_completion_tokens")
+    val maxCompletionTokens: Long? = null,
+    @SerializedName("is_moderated")
+    val isModerated: Boolean? = null
 )
 
 data class ApiKeyResponse(

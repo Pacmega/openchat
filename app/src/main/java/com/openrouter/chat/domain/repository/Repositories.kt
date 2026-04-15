@@ -36,7 +36,7 @@ class ModelRepository @Inject constructor(
                     ModelEntity(
                         id = dto.id,
                         name = dto.name,
-                        provider = dto.providerName ?: dto.provider
+                        provider = dto.id.substringBefore("/")
                     )
                 } ?: emptyList()
                 modelDao.replaceAll(models)

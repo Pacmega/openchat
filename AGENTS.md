@@ -50,6 +50,10 @@ source .env && ./gradlew test
 ## Implementation Rules
 
 - **Test Driven Development:** All new features and adjustments to existing features must follow TDD approaches. Write failing tests first, then implement code to pass those tests, then refactor.
+  - This applies to ALL code changes, including bug fixes, not just new features.
+  - Before making any code change (bug fix, refactor, new feature), first check if tests exist for the affected code.
+  - If tests don't exist, write them first - they should fail before the fix is applied.
+  - If tests exist, run them first to verify they fail before making changes.
 - **Compose:** Use `@Preview` for all UI components. Keep Composables stateless by hoisting state.
 - **Error Handling:** Use `Result` wrapper or sealed `UiState` class for network/disk operations.
 - **DI:** Use `@Inject` constructor injection. Avoid `EntryPoint` unless necessary.
