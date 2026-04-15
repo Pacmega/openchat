@@ -34,15 +34,13 @@ Clean Architecture with:
 - `data/` - Room entities/DAOs, Retrofit API
 - `di/` - Hilt modules
 
-## No Tests
+## Tests
 
-Project has no test sources. Run with `--continue` to bypass test tasks if needed:
-```bash
-./gradlew assembleDebug -x test -x testDebugUnitTest
-```
+The project uses JUnit for unit testing. Tests should be placed in the standard `src/test/` directory following the same package structure as the main source code.
 
 ## Implementation Rules
 
+- **Test Driven Development:** All new features and adjustments to existing features must follow TDD approaches. Write failing tests first, then implement code to pass those tests, then refactor.
 - **Compose:** Use `@Preview` for all UI components. Keep Composables stateless by hoisting state.
 - **Error Handling:** Use `Result` wrapper or sealed `UiState` class for network/disk operations.
 - **DI:** Use `@Inject` constructor injection. Avoid `EntryPoint` unless necessary.
