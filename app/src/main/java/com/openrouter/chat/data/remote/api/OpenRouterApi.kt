@@ -1,5 +1,6 @@
 package com.openrouter.chat.data.remote.api
 
+import com.openrouter.chat.data.remote.dto.ApiKeyResponse
 import com.openrouter.chat.data.remote.dto.ChatCompletionRequest
 import com.openrouter.chat.data.remote.dto.ChatCompletionResponse
 import com.openrouter.chat.data.remote.dto.OpenRouterModelsResponse
@@ -15,4 +16,9 @@ interface OpenRouterApi {
     suspend fun sendMessage(
         @Body request: ChatCompletionRequest
     ): Response<ChatCompletionResponse>
+
+    @GET("key")
+    suspend fun validateKey(
+        @Header("Authorization") apiKey: String
+    ): Response<ApiKeyResponse>
 }

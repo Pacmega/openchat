@@ -19,3 +19,13 @@ data class OpenRouterModel(
     @SerializedName("context_length")
     val contextLength: Long? = null
 )
+
+data class ApiKeyResponse(
+    @SerializedName("data")
+    val data: ApiKeyInfo
+)
+
+data class ApiKeyInfo(
+    @SerializedName("label")
+    val label: String
+)

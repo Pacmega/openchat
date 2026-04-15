@@ -38,6 +38,15 @@ Clean Architecture with:
 
 The project uses JUnit for unit testing. Tests should be placed in the standard `src/test/` directory following the same package structure as the main source code.
 
+### API Key for Tests
+
+Some tests require a real OpenRouter API key. The key is stored in `.env` in the project root and **must not be committed to git**.
+
+To run tests that need the API key:
+```bash
+source .env && ./gradlew test
+```
+
 ## Implementation Rules
 
 - **Test Driven Development:** All new features and adjustments to existing features must follow TDD approaches. Write failing tests first, then implement code to pass those tests, then refactor.

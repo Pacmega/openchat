@@ -13,6 +13,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
+import com.openrouter.chat.data.remote.api.OpenRouterApi
 import com.openrouter.chat.di.SecurePreferences
 import com.openrouter.chat.data.local.dao.ConversationDao
 import com.openrouter.chat.data.local.dao.MessageDao
@@ -22,16 +23,27 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
+import java.io.IOException
 import javax.inject.Inject
+
+sealed class ValidationResult {
+    data object Idle : ValidationResult()
+    data object Valid : ValidationResult()
+    data class Invalid(val message: String) : ValidationResult()
+}
 
 data class SettingsUiState(
     val apiKey: String = "",
-    val showClearDialog: Boolean = false
+    val showClearDialog: Boolean = false,
+    val isValidating: Boolean = false,
+    val validationResult: ValidationResult = ValidationResult.Idle
 )
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
     private val securePreferences: SecurePreferences,
+    private val openRouterApi: OpenRouterApi,
     private val modelDao: ModelDao,
     private val conversationDao: ConversationDao,
     private val messageDao: MessageDao
@@ -49,13 +61,66 @@ class SettingsViewModel @Inject constructor(
     }
 
     fun onApiKeyChange(key: String) {
-        _uiState.value = _uiState.value.copy(apiKey = key)
+        _uiState.value = _uiState.value.copy(
+            apiKey = key,
+            validationResult = ValidationResult.Idle
+        )
     }
 
-    fun saveApiKey() {
+    fun validateAndSaveApiKey() {
         val key = _uiState.value.apiKey.trim()
-        if (key.isNotEmpty()) {
-            securePreferences.apiKey = key
+        if (key.isEmpty()) return
+
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(
+                isValidating = true,
+                validationResult = ValidationResult.Idle
+            )
+
+            try {
+                val response = openRouterApi.validateKey("Bearer $key")
+                if (response.isSuccessful) {
+                    val body = response.body()
+                    if (body != null && body.data.label.isNotBlank()) {
+                        securePreferences.apiKey = key
+                        _uiState.value = _uiState.value.copy(
+                            isValidating = false,
+                            validationResult = ValidationResult.Valid
+                        )
+                    } else {
+                        _uiState.value = _uiState.value.copy(
+                            isValidating = false,
+                            validationResult = ValidationResult.Invalid("Invalid API key")
+                        )
+                    }
+                } else {
+                    _uiState.value = _uiState.value.copy(
+                        isValidating = false,
+                        validationResult = ValidationResult.Invalid("Invalid API key")
+                    )
+                }
+            } catch (e: HttpException) {
+                _uiState.value = _uiState.value.copy(
+                    isValidating = false,
+                    validationResult = ValidationResult.Invalid(
+                        when (e.code()) {
+                            401 -> "Invalid API key"
+                            403 -> "API key forbidden"
+                            else -> "Validation failed: ${e.code()}"
+                        }
+                    )
+                )
+            } catch (e: IOException) {
+                _uiState.value = _uiState.value.copy(
+                    isValidating = false,
+                    validationResult = ValidationResult.Invalid("Network error")
+                )
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(
+                    isValidating = false,
+                    validationResult = ValidationResult.Invalid("Validation failed")
+                )
+            }
         }
     }
 
@@ -75,7 +140,8 @@ class SettingsViewModel @Inject constructor(
             securePreferences.clearApiKey()
             _uiState.value = _uiState.value.copy(
                 apiKey = "",
-                showClearDialog = false
+                showClearDialog = false,
+                validationResult = ValidationResult.Idle
             )
         }
     }
@@ -153,15 +219,44 @@ fun SettingsScreen(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.End
                     ) {
-                        Button(onClick = viewModel::saveApiKey) {
-                            Text("Save")
+                        Button(
+                            onClick = viewModel::validateAndSaveApiKey,
+                            enabled = !uiState.isValidating && uiState.apiKey.isNotBlank()
+                        ) {
+                            if (uiState.isValidating) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier.size(16.dp),
+                                    strokeWidth = 2.dp,
+                                    color = MaterialTheme.colorScheme.onPrimary
+                                )
+                            } else {
+                                Text("Save")
+                            }
                         }
                     }
-                    Text(
-                        text = "Get your API key from openrouter.ai",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
+                    when (val result = uiState.validationResult) {
+                        is ValidationResult.Valid -> {
+                            Text(
+                                text = "API key is valid!",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                        is ValidationResult.Invalid -> {
+                            Text(
+                                text = result.message,
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.error
+                            )
+                        }
+                        is ValidationResult.Idle -> {
+                            Text(
+                                text = "Get your API key from openrouter.ai",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
                 }
             }
 
