@@ -11,6 +11,7 @@ import com.openrouter.chat.ui.screens.chat.ChatScreen
 import com.openrouter.chat.ui.screens.conversations.ConversationsScreen
 import com.openrouter.chat.ui.screens.models.ModelsScreen
 import com.openrouter.chat.ui.screens.settings.SettingsScreen
+import java.net.URLDecoder
 
 @Composable
 fun AppNavigation() {
@@ -40,7 +41,9 @@ fun AppNavigation() {
                 navArgument("modelName") { type = NavType.StringType }
             )
         ) { backStackEntry ->
-            val modelId = backStackEntry.arguments?.getString("modelId") ?: return@composable
+            val modelId = backStackEntry.arguments?.getString("modelId")?.let {
+                URLDecoder.decode(it, "UTF-8")
+            } ?: return@composable
             val modelName = backStackEntry.arguments?.getString("modelName") ?: "Conversations"
 
             ConversationsScreen(
@@ -63,7 +66,9 @@ fun AppNavigation() {
             )
         ) { backStackEntry ->
             val conversationId = backStackEntry.arguments?.getLong("conversationId") ?: return@composable
-            val modelId = backStackEntry.arguments?.getString("modelId") ?: return@composable
+            val modelId = backStackEntry.arguments?.getString("modelId")?.let {
+                URLDecoder.decode(it, "UTF-8")
+            } ?: return@composable
 
             ChatScreen(
                 conversationId = conversationId,
