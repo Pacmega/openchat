@@ -3,10 +3,16 @@ package com.openrouter.chat.ui.screens.settings
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -37,7 +43,8 @@ data class SettingsUiState(
     val apiKey: String = "",
     val showClearDialog: Boolean = false,
     val isValidating: Boolean = false,
-    val validationResult: ValidationResult = ValidationResult.Idle
+    val validationResult: ValidationResult = ValidationResult.Idle,
+    val isApiKeyVisible: Boolean = false
 )
 
 @HiltViewModel
@@ -122,6 +129,10 @@ class SettingsViewModel @Inject constructor(
                 )
             }
         }
+    }
+
+    fun toggleApiKeyVisibility() {
+        _uiState.value = _uiState.value.copy(isApiKeyVisible = !_uiState.value.isApiKeyVisible)
     }
 
     fun showClearDialog() {
@@ -213,7 +224,17 @@ fun SettingsScreen(
                         value = uiState.apiKey,
                         onValueChange = viewModel::onApiKeyChange,
                         modifier = Modifier.fillMaxWidth(),
-                        placeholder = { Text("Enter your API key") }
+                        placeholder = { Text("Enter your API key") },
+                        visualTransformation = if (uiState.isApiKeyVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                        trailingIcon = {
+                            IconButton(onClick = viewModel::toggleApiKeyVisibility) {
+                                Icon(
+                                    imageVector = if (uiState.isApiKeyVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility,
+                                    contentDescription = if (uiState.isApiKeyVisible) "Hide API key" else "Show API key"
+                                )
+                            }
+                        }
                     )
                     Row(
                         modifier = Modifier.fillMaxWidth(),

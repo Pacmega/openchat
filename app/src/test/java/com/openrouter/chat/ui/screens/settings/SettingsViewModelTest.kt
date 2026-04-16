@@ -13,6 +13,18 @@ class SettingsUiStateTest {
         assertFalse(state.showClearDialog)
         assertFalse(state.isValidating)
         assertEquals(ValidationResult.Idle, state.validationResult)
+        assertFalse("API key must be masked by default", state.isApiKeyVisible)
+    }
+
+    @Test
+    fun `isApiKeyVisible can be toggled via copy`() {
+        val hidden = SettingsUiState()
+        val revealed = hidden.copy(isApiKeyVisible = true)
+        val hiddenAgain = revealed.copy(isApiKeyVisible = false)
+
+        assertFalse(hidden.isApiKeyVisible)
+        assertTrue(revealed.isApiKeyVisible)
+        assertFalse(hiddenAgain.isApiKeyVisible)
     }
 
     @Test
