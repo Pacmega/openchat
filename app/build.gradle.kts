@@ -98,6 +98,7 @@ dependencies {
     testImplementation("app.cash.turbine:turbine:1.1.0")
     testImplementation("androidx.arch.core:core-testing:2.2.0")
     testImplementation("com.google.truth:truth:1.2.0")
+    testImplementation("org.mockito:mockito-core:5.11.0")
 
     testRuntimeOnly("org.junit.vintage:junit-vintage-engine:5.11.4")
 }
