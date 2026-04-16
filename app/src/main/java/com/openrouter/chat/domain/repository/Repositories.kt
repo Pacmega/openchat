@@ -141,7 +141,30 @@ class MessageRepository @Inject constructor(
         return id
     }
 
-    suspend fun updateMessageContent(messageId: Long, content: String) {
+    suspend fun updateMessageContent(messageId: Long, content: String): Long {
+        val originalMessage = messageDao.getMessageById(messageId) ?: return -1
+        val newMessage = MessageEntity(
+            conversationId = originalMessage.conversationId,
+            content = content,
+            isFromUser = false,
+            timestamp = System.currentTimeMillis(),
+            isStreaming = true
+        )
+        return messageDao.insertMessage(newMessage)
+    }
+
+    suspend fun saveAssistantMessage(conversationId: Long, content: String, isStreaming: Boolean = true): Long {
+        val message = MessageEntity(
+            conversationId = conversationId,
+            content = content,
+            isFromUser = false,
+            timestamp = System.currentTimeMillis(),
+            isStreaming = isStreaming
+        )
+        return messageDao.insertMessage(message)
+    }
+
+    suspend fun updateAssistantMessageContent(messageId: Long, content: String) {
         messageDao.updateContent(messageId, content)
     }
 

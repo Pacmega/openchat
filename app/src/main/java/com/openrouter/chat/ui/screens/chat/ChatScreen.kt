@@ -158,6 +158,11 @@ class ChatViewModel @Inject constructor(
 
                 val fullResponse = StringBuilder()
 
+                val assistantMessageId = messageRepository.saveAssistantMessage(
+                    currentConversationId,
+                    ""
+                )
+
                 okHttpClient.newCall(request).enqueue(object : Callback {
                     override fun onFailure(call: Call, e: IOException) {
                         viewModelScope.launch {
@@ -182,26 +187,27 @@ class ChatViewModel @Inject constructor(
 
                             resp.body?.source()?.let { source ->
                                 val buffer = Buffer()
+
                                 while (!source.exhausted()) {
                                     source.read(buffer, 8192)
                                     val chunk = buffer.readUtf8()
                                     fullResponse.append(processSseChunk(chunk))
 
                                     viewModelScope.launch {
-                                        messageRepository.updateMessageContent(
-                                            messageId,
+                                        messageRepository.updateAssistantMessageContent(
+                                            assistantMessageId,
                                             fullResponse.toString()
                                         )
                                     }
                                 }
-                            }
 
-                            viewModelScope.launch {
-                                messageRepository.markStreamingComplete(
-                                    messageId,
-                                    fullResponse.toString()
-                                )
-                                _uiState.value = _uiState.value.copy(isStreaming = false)
+                                viewModelScope.launch {
+                                    messageRepository.markStreamingComplete(
+                                        assistantMessageId,
+                                        fullResponse.toString()
+                                    )
+                                    _uiState.value = _uiState.value.copy(isStreaming = false)
+                                }
                             }
                         }
                     }
@@ -333,14 +339,16 @@ fun ChatScreen(
                     .padding(horizontal = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                items(uiState.messages) { message ->
-                    MessageBubble(
-                        content = message.content,
-                        isFromUser = message.isFromUser,
-                        modifier = Modifier.align(
-                            if (message.isFromUser) Alignment.End else Alignment.Start
+                items(uiState.messages, key = { message -> message.id }) { message ->
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = if (message.isFromUser) Arrangement.End else Arrangement.Start
+                    ) {
+                        MessageBubble(
+                            content = message.content,
+                            isFromUser = message.isFromUser
                         )
-                    )
+                    }
                 }
 
                 if (uiState.isStreaming) {
